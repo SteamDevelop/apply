@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package rapi;
+
+message ApplyReq {
+    string finger = 1;
+    string pass = 2;
+}
+
+message ApplyRes {
+    string err = 1;
+}
+
+message SignReq {
+    string finger = 1;
+    string pass = 2;
+}
+
+message SignRes {
+    string err = 1;
+}
+
+
+service Rapi {
+    rpc apply(ApplyReq) returns(ApplyRes);
+    rpc sign(SignReq) returns(SignRes);
+}
