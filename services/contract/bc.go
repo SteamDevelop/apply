@@ -14,19 +14,19 @@ const (
 
 type bcConfig struct {
 	Url          string `json:"url"`
-	ChainId      int64 `json:"chainId"`
+	ChainId      int64  `json:"chainId"`
 	TokenAddress string `json:"tokenAddress"`
 	ApplyAddress string `json:"applyAddress"`
-	
+
 	OwnerAddress string `json:"ownerAddress"`
-	OwnerKey  string `json:"ownerKey"`
+	OwnerKey     string `json:"ownerKey"`
 }
 type Bc struct {
 	conf      bcConfig
 	ethclient *ethclient.Client
 	apply     *Apply
 	token     *Token
-	signer 	 types.Signer
+	signer    types.Signer
 }
 
 func (c *Bc) Token() *Token {

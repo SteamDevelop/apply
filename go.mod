@@ -22,7 +22,7 @@ require (
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/rjeczalik/notify v0.9.2 // indirect
-	github.com/scryinfo/dot v0.1.3-0.20190625101940-1336d6ee5a13
+	github.com/scryinfo/dot v0.1.3-0.20190625102047-666d44ee7d72
 	github.com/scryinfo/dot/dots/gindot v0.0.0-20190622091252-bab0929bd7e7
 	github.com/scryinfo/dot/dots/grpc v0.0.0-20190625102047-666d44ee7d72
 	github.com/scryinfo/scryg v0.1.3-0.20190608053141-a292b801bfd6
@@ -37,3 +37,5 @@ require (
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/urfave/cli.v1 v1.20.0 // indirect
 )
+
+replace github.com/scryinfo/dot/dots/grpc v0.0.0-20190625102047-666d44ee7d72 => ../dot/dots/grpc
