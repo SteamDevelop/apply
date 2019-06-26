@@ -1,6 +1,8 @@
 pragma solidity 0.4.24;
 
-contract applyContract {
+import "./Token.sol";
+
+contract Apply {
     struct addrInfo {
         string finger;
         bool signed;
@@ -10,14 +12,32 @@ contract applyContract {
     mapping (address => addrInfo) addrMap;
     address[] applicants;
 
+    uint256 amount = 66;
+
+    address owner         = 0x0;
+    ERC20   token;
+
+    constructor (address _token) public {
+        require(_token != 0x0);
+
+        owner = msg.sender;
+        token = ERC20(_token);
+    }
+
     function apply(address addr, string finger) external returns(bool) {
         applicants.push(addr);
-        addrMap[addr].used = true;
+        addrMap[addr] = addrInfo(finger, false, true);
 
         return true;
     }
 
-    function sign(address addr) external returns(bool)  {
+    function sign(address addr, string finger) external returns(bool)  {
+        require(addrMap[addr].used, "Address not apply");
+        addrMap[addr].finger = finger;
+
+        if (!addrMap[addr].signed) {
+            token.transfer(addr, amount);
+        }
         addrMap[addr].signed = true;
 
         return true;
