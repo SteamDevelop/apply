@@ -6,6 +6,7 @@ require (
 	github.com/ethereum/go-ethereum v1.8.27
 	github.com/golang/protobuf v1.3.1
 	github.com/hashicorp/golang-lru v0.5.1 // indirect
+	github.com/pkg/errors v0.8.1
 	github.com/scryinfo/dot v0.1.3-0.20190625101940-1336d6ee5a13
 	github.com/scryinfo/dot/dots/gindot v0.0.0-20190622091252-bab0929bd7e7
 	github.com/scryinfo/dot/dots/grpc v0.0.0-20190625102047-666d44ee7d72

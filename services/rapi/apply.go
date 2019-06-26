@@ -2,7 +2,10 @@ package rapi
 
 import (
 	"context"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/pkg/errors"
 	"github.com/scryinfo/apply/dots/auth2"
+	"github.com/scryinfo/apply/services/contract"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"github.com/scryinfo/dp/dots/auth/stub"
@@ -20,6 +23,7 @@ type rapiConfig struct {
 type rapiServerImp struct {
 	ServerNobl gserver.ServerNobl `dot:""`
 	Auth2      *auth2.Auth2       `dot:""`
+	Bc         *contract.Bc       `dot:""`
 }
 
 func (c *rapiServerImp) Apply(ctx context.Context, req *ApplyReq) (res *ApplyRes, err error) {
@@ -34,15 +38,25 @@ func (c *rapiServerImp) Apply(ctx context.Context, req *ApplyReq) (res *ApplyRes
 		} else {
 			res.Addr = ares.Address
 
-			err = nil
+			_, err = c.Bc.Apply().Apply(nil, common.HexToAddress(res.Addr), req.Finger)
 		}
 	}
 	return res, err
 }
 
-func (c *rapiServerImp) Sign(context.Context, *SignReq) (*SignRes, error) {
-	res := &SignRes{}
-	return res, nil
+func (c *rapiServerImp) Sign(ctx context.Context, req *SignReq) (res *SignRes, err error) {
+	res = &SignRes{}
+
+	if len(req.Finger) < 0 || len(req.Addr) < 0 {
+		err = errors.New("finger or addr is empty")
+	} else {
+		_, err = c.Bc.Apply().Sign(nil, common.HexToAddress(req.Addr), req.Finger)
+		if err == nil {
+
+		}
+	}
+
+	return res, err
 }
 
 //func newHiServer(conf interface{}) (dot.Dot, error) {
@@ -80,12 +94,13 @@ func RapiServerTypeLives() []*dot.TypeLives {
 		Lives: []dot.Live{
 			dot.Live{
 				LiveId:    RapiServerTypeId,
-				RelyLives: map[string]dot.LiveId{"ServerNobl": gserver.ServerNoblTypeId},
+				RelyLives: map[string]dot.LiveId{"ServerNobl": gserver.ServerNoblTypeId, "Bc": contract.BcTypeId},
 			},
 		},
 	}
 
 	lives := []*dot.TypeLives{gserver.ServerNoblTypeLive(), tl}
+	lives = append(lives, contract.BcTypeLives()...)
 
 	return lives
 }

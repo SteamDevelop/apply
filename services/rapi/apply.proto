@@ -14,7 +14,7 @@ message ApplyRes {
 
 message SignReq {
     string finger = 1;
-    string pass = 2;
+    string addr = 2;
 }
 
 message SignRes {
