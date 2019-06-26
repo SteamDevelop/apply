@@ -33,6 +33,7 @@ func (c *rapiServerImp) Apply(ctx context.Context, req *ApplyReq) (res *ApplyRes
 			err = err2
 		} else {
 			res.Addr = ares.Address
+
 			err = nil
 		}
 	}

@@ -1,0 +1,8 @@
+.idea/
+contract/build/
+go.sum
+*.log
+
+services/apply/apply
+
+node_modules/
