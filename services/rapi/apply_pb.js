@@ -440,7 +440,7 @@ proto.rapi.SignReq.prototype.toObject = function(opt_includeInstance) {
 proto.rapi.SignReq.toObject = function(includeInstance, msg) {
   var f, obj = {
     finger: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    pass: jspb.Message.getFieldWithDefault(msg, 2, "")
+    addr: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -483,7 +483,7 @@ proto.rapi.SignReq.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setPass(value);
+      msg.setAddr(value);
       break;
     default:
       reader.skipField();
@@ -521,7 +521,7 @@ proto.rapi.SignReq.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getPass();
+  f = message.getAddr();
   if (f.length > 0) {
     writer.writeString(
       2,
@@ -547,16 +547,16 @@ proto.rapi.SignReq.prototype.setFinger = function(value) {
 
 
 /**
- * optional string pass = 2;
+ * optional string addr = 2;
  * @return {string}
  */
-proto.rapi.SignReq.prototype.getPass = function() {
+proto.rapi.SignReq.prototype.getAddr = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.rapi.SignReq.prototype.setPass = function(value) {
+proto.rapi.SignReq.prototype.setAddr = function(value) {
   jspb.Message.setProto3StringField(this, 2, value);
 };
 

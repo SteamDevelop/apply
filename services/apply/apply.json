@@ -68,6 +68,23 @@
           }
         }
       ]
+    },
+    {
+      "metaData":{
+        "name": "bc",
+        "typeId":"7a54d9d5-a808-4057-9bef-86359d7fd8ee"
+      },
+      "lives":[
+        {
+          "liveId":"7a54d9d5-a808-4057-9bef-86359d7fd8ee",
+          "json":{
+            "url":"",
+            "chainId": "3",
+            "tokenAddress": "",
+            "applyAddress": ""
+          }
+        }
+      ]
     }
   ]
 }
