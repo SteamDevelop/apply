@@ -1,25 +1,45 @@
 package rapi
 
 import (
-"context"
-"github.com/scryinfo/dot/dot"
-"github.com/scryinfo/dot/dots/grpc/gserver"
+	"context"
+	"github.com/scryinfo/apply/dots/auth2"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/grpc/gserver"
+	"github.com/scryinfo/dp/dots/auth/stub"
 )
 
 const (
 	RapiServerTypeId = "RapiServerId"
 )
 
-type RapiServerImp struct {
+type rapiConfig struct {
+	Bcurl   string
+	ChainId string
+}
+
+type rapiServerImp struct {
 	ServerNobl gserver.ServerNobl `dot:""`
+	Auth2      *auth2.Auth2       `dot:""`
 }
 
-func (serv *RapiServerImp) Apply(context.Context, *ApplyReq) (*ApplyRes, error) {
-	res := &ApplyRes{}
-	return res, nil
+func (c *rapiServerImp) Apply(ctx context.Context, req *ApplyReq) (res *ApplyRes, err error) {
+
+	res = &ApplyRes{}
+	{
+		ares, err2 := c.Auth2.Client().GenerateAddress(ctx, &stub.AddressParameter{
+			Password: req.Pass,
+		})
+		if err2 != nil {
+			err = err2
+		} else {
+			res.Addr = ares.Address
+			err = nil
+		}
+	}
+	return res, err
 }
 
-func (serv *RapiServerImp) Sign(context.Context, *SignReq) (*SignRes, error) {
+func (c *rapiServerImp) Sign(context.Context, *SignReq) (*SignRes, error) {
 	res := &SignRes{}
 	return res, nil
 }
@@ -45,10 +65,8 @@ func (serv *RapiServerImp) Sign(context.Context, *SignReq) (*SignRes, error) {
 //	return d, err
 //}
 
-
-
-func (serv *RapiServerImp) Start(ignore bool) error {
-	RegisterRapiServer(serv.ServerNobl.Server(), serv)
+func (c *rapiServerImp) Start(ignore bool) error {
+	RegisterRapiServer(c.ServerNobl.Server(), c)
 	return nil
 }
 
@@ -56,7 +74,7 @@ func (serv *RapiServerImp) Start(ignore bool) error {
 func RapiServerTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: RapiServerTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
-			return &RapiServerImp{}, nil
+			return &rapiServerImp{}, nil
 		}},
 		Lives: []dot.Live{
 			dot.Live{

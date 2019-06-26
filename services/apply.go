@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/scryinfo/apply/dots/auth2"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 )
@@ -8,7 +9,8 @@ import (
 //AddNewers add newers of api
 func Add(l dot.Line) error {
 	//add the controller
-	typeLives := gserver.GinNoblTypeLives()
-	err := l.PreAdd(typeLives...)
+	lives := gserver.GinNoblTypeLives()
+	lives = append(lives, auth2.Auth2TypeLives()...)
+	err := l.PreAdd(lives...)
 	return err
 }

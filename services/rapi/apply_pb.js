@@ -285,7 +285,8 @@ proto.rapi.ApplyRes.prototype.toObject = function(opt_includeInstance) {
  */
 proto.rapi.ApplyRes.toObject = function(includeInstance, msg) {
   var f, obj = {
-    err: jspb.Message.getFieldWithDefault(msg, 1, "")
+    err: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    addr: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -326,6 +327,10 @@ proto.rapi.ApplyRes.deserializeBinaryFromReader = function(msg, reader) {
       var value = /** @type {string} */ (reader.readString());
       msg.setErr(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setAddr(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -362,6 +367,13 @@ proto.rapi.ApplyRes.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getAddr();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -377,6 +389,21 @@ proto.rapi.ApplyRes.prototype.getErr = function() {
 /** @param {string} value */
 proto.rapi.ApplyRes.prototype.setErr = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string addr = 2;
+ * @return {string}
+ */
+proto.rapi.ApplyRes.prototype.getAddr = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/** @param {string} value */
+proto.rapi.ApplyRes.prototype.setAddr = function(value) {
+  jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
