@@ -2,8 +2,10 @@ package contract
 
 import (
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/scryinfo/dot/dot"
+	"math/big"
 )
 
 const (
@@ -12,15 +14,19 @@ const (
 
 type bcConfig struct {
 	Url          string `json:"url"`
-	ChainId      string `json:"chainId"`
+	ChainId      int64 `json:"chainId"`
 	TokenAddress string `json:"tokenAddress"`
 	ApplyAddress string `json:"applyAddress"`
+	
+	OwnerAddress string `json:"ownerAddress"`
+	OwnerKey  string `json:"ownerKey"`
 }
 type Bc struct {
 	conf      bcConfig
 	ethclient *ethclient.Client
 	apply     *Apply
 	token     *Token
+	signer 	 types.Signer
 }
 
 func (c *Bc) Token() *Token {
@@ -59,6 +65,8 @@ func (c *Bc) Create(l dot.Line) error {
 	if err != nil {
 		return err
 	}
+
+	c.signer = types.NewEIP155Signer(big.NewInt(c.conf.ChainId))
 
 	return err
 }

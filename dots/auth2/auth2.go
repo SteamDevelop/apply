@@ -1,9 +1,9 @@
 package auth2
 
 import (
+	"github.com/scryinfo/apply/dots/auth/stub"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/conns"
-	"github.com/scryinfo/dp/dots/auth/stub"
 )
 
 const (

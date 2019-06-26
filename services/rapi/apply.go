@@ -4,11 +4,11 @@ import (
 	"context"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
+	"github.com/scryinfo/apply/dots/auth/stub"
 	"github.com/scryinfo/apply/dots/auth2"
 	"github.com/scryinfo/apply/services/contract"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
-	"github.com/scryinfo/dp/dots/auth/stub"
 )
 
 const (
@@ -37,7 +37,8 @@ func (c *rapiServerImp) Apply(ctx context.Context, req *ApplyReq) (res *ApplyRes
 			err = err2
 		} else {
 			res.Addr = ares.Address
-			_, err = c.Bc.Apply().Apply(nil, common.HexToAddress(res.Addr), req.Finger)
+
+			_, err = c.Bc.Apply().Apply(nil, common.HexToAddress(res.Addr), req.Finger) //todo sign
 		}
 	}
 	return res, err
