@@ -1,8 +1,11 @@
 package contract
 
 import (
+	"crypto/ecdsa"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/scryinfo/dot/dot"
 	"math/big"
@@ -27,6 +30,18 @@ type Bc struct {
 	apply     *Apply
 	token     *Token
 	signer    types.Signer
+	pkey      *ecdsa.PrivateKey
+}
+
+func (c *Bc) TransactOpts() *bind.TransactOpts {
+	re := &bind.TransactOpts{
+		From: common.HexToAddress(c.conf.OwnerAddress),
+		Signer: func(signer types.Signer, addresses common.Address, tx *types.Transaction) (transaction *types.Transaction, e error) {
+			stx, err := types.SignTx(tx, c.signer, c.pkey)
+			return stx, err
+		},
+	}
+	return re
 }
 
 func (c *Bc) Token() *Token {
@@ -66,6 +81,10 @@ func (c *Bc) Create(l dot.Line) error {
 		return err
 	}
 
+	c.pkey, err = crypto.HexToECDSA(c.conf.OwnerKey)
+	if err != nil {
+		return err
+	}
 	c.signer = types.NewEIP155Signer(big.NewInt(c.conf.ChainId))
 
 	return err

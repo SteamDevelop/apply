@@ -38,7 +38,7 @@ func (c *rapiServerImp) Apply(ctx context.Context, req *ApplyReq) (res *ApplyRes
 		} else {
 			res.Addr = ares.Address
 
-			_, err = c.Bc.Apply().Apply(nil, common.HexToAddress(res.Addr), req.Finger) //todo sign
+			_, err = c.Bc.Apply().Apply(c.Bc.TransactOpts(), common.HexToAddress(res.Addr), req.Finger) //todo sign
 		}
 	}
 	return res, err
@@ -50,7 +50,7 @@ func (c *rapiServerImp) Sign(ctx context.Context, req *SignReq) (res *SignRes, e
 	if len(req.Finger) < 0 || len(req.Addr) < 0 {
 		err = errors.New("finger or addr is empty")
 	} else {
-		_, err = c.Bc.Apply().Sign(nil, common.HexToAddress(req.Addr), req.Finger)
+		_, err = c.Bc.Apply().Sign(c.Bc.TransactOpts(), common.HexToAddress(req.Addr), req.Finger)
 		if err == nil {
 
 		}
