@@ -14,7 +14,7 @@ export class ApplyService {
     static sign(params) {
         let request = new SignReq()
         let loginService = new RapiPromiseClient("https://..../rapi", null, null)
-        request.setPassword(params.password)
+        // request.setPassword(params.password)
         request.setFinger(params.finger)
         return loginService.sign(request, null)
     }
