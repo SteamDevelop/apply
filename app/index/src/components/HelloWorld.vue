@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import {utils} from "../utils/utils.js";
+import {ApplyService} from "../utils/utils.js";
 export default {
   name: 'HelloWorld',
   data () {
@@ -16,12 +16,20 @@ export default {
   },
   methods: {
     apply: function () {
-      utils.apply(this.password);
+      if (localStorage.getItem("sdfd") === null) {
+        ApplyService.apply({password: this.password, finger:"sdfd"}).then(data => {
+          localStorage.setItem("sdfd", data);
+        }).catch((err) => {
+          alert(err);
+        });
+      } else {
+        alert("你已完成报名，请不要重复操作！");
+      }
     }
   }
 }
 </script>
 
-<style >
+<style>
 
 </style>

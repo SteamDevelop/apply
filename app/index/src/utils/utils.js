@@ -1,33 +1,22 @@
-let utils = {
-  apply: function (pwd) {
-    const {ReqData, ResData} = require('./hi_pb.js');
-    const {HiDotClient} = require('./hi_grpc_web_pb.js');
 
-    let rpcweb = new HiDotClient('http://localhost:6868');
 
-    let request = new ReqData();
-    request.setName('http hi client');
+import { RapiPromiseClient } from './apply_grpc_web_pb'
+import { ApplyReq, SignReq } from './apply_pb'
 
-    rpcweb.hi(request, pwd, (err, response) => {
-
-      console.log("Instead of memory. ");
-      if (response) {
-        console.log(response.getName());
-      }else{
-        console.log(err);
-      }
-    });
-
-    let rpcwebs = new HiDotClient('https://localhost:6868');
-    rpcwebs.hi(request, {}, (err, response) => {
-      console.log("http");
-      if (response) {
-        console.log(response.getName());
-      }else{
-        console.log(err);
-      }
-    });
+export class ApplyService {
+  static apply (params) {
+    let request = new ApplyReq()
+    let loginService = new RapiPromiseClient("https://127.0.0.1:443/rapi", null, null)
+    request.setPass(params.password)
+    request.setFinger(params.finger)
+    return loginService.apply(request, null)
   }
-};
 
-export {utils};
+  static sign(params) {
+    let request = new SignReq()
+    let loginService = new RapiPromiseClient("https://localhost:443/rapi", null, null)
+    // request.setPass(params.password)
+    request.setFinger(params.finger)
+    return loginService.sign(request, null)
+  }
+}

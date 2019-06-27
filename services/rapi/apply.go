@@ -3,11 +3,13 @@ package rapi
 import (
 	"context"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 	"github.com/scryinfo/apply/dots/auth/stub"
 	"github.com/scryinfo/apply/dots/auth2"
 	"github.com/scryinfo/apply/services/contract"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/gindot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 )
 
@@ -24,6 +26,7 @@ type rapiServerImp struct {
 	ServerNobl gserver.ServerNobl `dot:""`
 	Auth2      *auth2.Auth2       `dot:""`
 	Bc         *contract.Bc       `dot:""`
+	GinRouter  *gindot.Router `dot:""`
 }
 
 func (c *rapiServerImp) Apply(ctx context.Context, req *ApplyReq) (res *ApplyRes, err error) {
@@ -85,6 +88,12 @@ func (c *rapiServerImp) Start(ignore bool) error {
 	return nil
 }
 
+func (c *rapiServerImp) AfterAllStart(l dot.Line)  {
+	c.GinRouter.Router().Any("/rapi.Rapi/apply", func(i *gin.Context) {
+
+	})
+}
+
 //RapiServerTypeLives make all type lives
 func RapiServerTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
@@ -94,7 +103,7 @@ func RapiServerTypeLives() []*dot.TypeLives {
 		Lives: []dot.Live{
 			dot.Live{
 				LiveId:    RapiServerTypeId,
-				RelyLives: map[string]dot.LiveId{"ServerNobl": gserver.ServerNoblTypeId, "Bc": contract.BcTypeId},
+				RelyLives: map[string]dot.LiveId{"ServerNobl": gserver.ServerNoblTypeId, "Bc": contract.BcTypeId, "GinRouter":gindot.RouterTypeId},
 			},
 		},
 	}
