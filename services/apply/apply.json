@@ -6,17 +6,17 @@
   "dots":[
     {
       "metaData":{
-        "name": "gin ",
-        "typeId":"4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+        "name": "http  ",
+        "typeId":"afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0"
       },
       "lives":[
         {
-          "liveId":"4943e959-7ad7-42c6-84dd-8b24e9ed30bb",
+          "liveId":"afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
           "json": {
             "addr": ":446",
             "tls": {
-              "keyFile": "apply.scry.info.key",
-              "pemFile": "apply.scry.info.pem"
+              "key": "apply.scry.info.key",
+              "pem": "apply.scry.info.pem"
             }
           }
         }
