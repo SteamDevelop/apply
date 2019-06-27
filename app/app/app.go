@@ -40,7 +40,7 @@ func Add(l dot.Line) error {
 					et, err := os.Executable()
 					if err == nil {
 						ex = filepath.Dir(et)
-						if !sfile.ExistFile(filepath.Join(ex, "dist")) {
+						if !sfile.ExistFile(filepath.Join(ex, "dist-apply")) {
 							temp := filepath.Dir(ex)
 							temp = filepath.Dir(temp)
 							if sfile.ExistFile(filepath.Join(temp, "app/dist")) {
@@ -49,7 +49,9 @@ func Add(l dot.Line) error {
 						}
 					}
 				}
-				engine.GinEngine().Static("/", ex)
+				engine.GinEngine().StaticFile("/apply", filepath.Join(ex,"dist-apply/index.html"))
+				engine.GinEngine().Static("/static", filepath.Join(ex,"dist-apply/"))
+				engine.GinEngine().StaticFile("/sign", filepath.Join(ex,"dist-sign/index.html"))
 			}
 		},
 	})
