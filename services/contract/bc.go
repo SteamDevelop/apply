@@ -52,6 +52,10 @@ func (c *Bc) Apply() *Apply {
 	return c.apply
 }
 
+func (c *Bc) EthClient() *ethclient.Client {
+	return c.ethclient
+}
+
 func (c *Bc) Destroy(ignore bool) error {
 	c.apply = nil
 	c.token = nil
