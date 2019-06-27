@@ -2,11 +2,12 @@ package rapi
 
 import (
 	"context"
+	"crypto/ecdsa"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
-	"github.com/scryinfo/apply/dots/auth/stub"
 	"github.com/scryinfo/apply/dots/auth2"
 	"github.com/scryinfo/apply/services/contract"
 	"github.com/scryinfo/dot/dot"
@@ -49,16 +50,17 @@ func (c *rapiServerImp) Apply(ctx context.Context, req *ApplyReq) (res *ApplyRes
 
 	res = &ApplyRes{}
 	{
-		ares, err2 := c.Auth2.Client().GenerateAddress(ctx, &stub.AddressParameter{
-			Password: req.Pass,
-		})
-		if err2 != nil {
-			err = err2
-		} else {
-			res.Addr = ares.Address
-			if c.task != nil {
-				c.task <- func() (transaction *types.Transaction, e error) {
-					return c.Bc.Apply().Apply(c.Bc.TransactOpts(), common.HexToAddress(res.Addr), req.Finger)
+		privateKey, err := crypto.GenerateKey()
+		if err == nil {
+			publicKeyECDSA, ok := privateKey.Public().(*ecdsa.PublicKey)
+			if ok {
+				address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
+
+				res.Addr = address
+				if c.task != nil {
+					c.task <- func() (transaction *types.Transaction, e error) {
+						return c.Bc.Apply().Apply(c.Bc.TransactOpts(), common.HexToAddress(address), req.Finger)
+					}
 				}
 			}
 		}
