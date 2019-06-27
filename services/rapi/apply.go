@@ -2,8 +2,9 @@ package rapi
 
 import (
 	"context"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/gin-gonic/gin"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/pkg/errors"
 	"github.com/scryinfo/apply/dots/auth/stub"
 	"github.com/scryinfo/apply/dots/auth2"
@@ -11,6 +12,7 @@ import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/gindot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
+	"time"
 )
 
 const (
@@ -26,7 +28,22 @@ type rapiServerImp struct {
 	ServerNobl gserver.ServerNobl `dot:""`
 	Auth2      *auth2.Auth2       `dot:""`
 	Bc         *contract.Bc       `dot:""`
-	GinRouter  *gindot.Router `dot:""`
+
+	task      chan func() (*types.Transaction, error)
+	taskClose chan bool
+}
+
+func (c *rapiServerImp) Stop(ignore bool) error {
+	if tc := c.taskClose; tc != nil {
+		c.taskClose = nil
+		close(tc)
+	}
+
+	if tc := c.task; tc != nil {
+		c.task = nil
+		close(tc)
+	}
+	return nil
 }
 
 func (c *rapiServerImp) Apply(ctx context.Context, req *ApplyReq) (res *ApplyRes, err error) {
@@ -40,8 +57,11 @@ func (c *rapiServerImp) Apply(ctx context.Context, req *ApplyReq) (res *ApplyRes
 			err = err2
 		} else {
 			res.Addr = ares.Address
-
-			_, err = c.Bc.Apply().Apply(c.Bc.TransactOpts(), common.HexToAddress(res.Addr), req.Finger) //todo sign
+			if c.task != nil {
+				c.task <- func() (transaction *types.Transaction, e error) {
+					return c.Bc.Apply().Apply(c.Bc.TransactOpts(), common.HexToAddress(res.Addr), req.Finger)
+				}
+			}
 		}
 	}
 	return res, err
@@ -53,9 +73,10 @@ func (c *rapiServerImp) Sign(ctx context.Context, req *SignReq) (res *SignRes, e
 	if len(req.Finger) < 0 || len(req.Addr) < 0 {
 		err = errors.New("finger or addr is empty")
 	} else {
-		_, err = c.Bc.Apply().Sign(c.Bc.TransactOpts(), common.HexToAddress(req.Addr), req.Finger)
-		if err == nil {
-
+		if c.task != nil {
+			c.task <- func() (*types.Transaction, error) {
+				return c.Bc.Apply().Sign(c.Bc.TransactOpts(), common.HexToAddress(req.Addr), req.Finger)
+			}
 		}
 	}
 
@@ -84,14 +105,28 @@ func (c *rapiServerImp) Sign(ctx context.Context, req *SignReq) (res *SignRes, e
 //}
 
 func (c *rapiServerImp) Start(ignore bool) error {
+	c.task = make(chan func() (*types.Transaction, error), 100)
+	c.taskClose = make(chan bool)
+
+	go func() {
+
+		for {
+			select {
+			case call := <-c.task:
+				tx, err := call()
+				if err == nil {
+					_, err = bind.WaitMined(context.Background(), c.Bc.EthClient(), tx)
+					time.Sleep(1 * time.Second)
+				}
+			case <-c.taskClose:
+				return
+			}
+		}
+
+	}()
+
 	RegisterRapiServer(c.ServerNobl.Server(), c)
 	return nil
-}
-
-func (c *rapiServerImp) AfterAllStart(l dot.Line)  {
-	c.GinRouter.Router().Any("/rapi.Rapi/apply", func(i *gin.Context) {
-
-	})
 }
 
 //RapiServerTypeLives make all type lives
