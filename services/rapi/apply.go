@@ -2,6 +2,7 @@ package rapi
 
 import (
 	"context"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/pkg/errors"
@@ -10,6 +11,7 @@ import (
 	"github.com/scryinfo/apply/services/contract"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
+	"time"
 )
 
 const (
@@ -109,11 +111,12 @@ func (c *rapiServerImp) Start(ignore bool) error {
 
 		for {
 			select {
-			case _ = <-c.task:
-				//tx, err :=t()
-				//if err == nil {
-				//	receipt, err = bind.WaitMined(c.ctx, c.Bc., tx)
-				//}
+			case call := <-c.task:
+				tx, err := call()
+				if err == nil {
+					_, err = bind.WaitMined(context.Background(), c.Bc.EthClient(), tx)
+					time.Sleep(1 * time.Second)
+				}
 			case <-c.taskClose:
 				return
 			}
