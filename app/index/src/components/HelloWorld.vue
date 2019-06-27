@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-input v-model="password" placeholder="password" clearable show-password></el-input>
+  <div v-show="showControl">
+    <el-input v-model="password" placeholder="password" clearable show-password></el-input><br/><br/>
     <el-button type="primary" size="mini" @click="apply">生成地址并报名</el-button>
   </div>
 </template>
@@ -11,20 +11,25 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      password: ""
+      password: "",
+      showControl: true,
     }
   },
   methods: {
     apply: function () {
-      if (localStorage.getItem("sdfd") === null) {
-        ApplyService.apply({password: this.password, finger:"sdfd"}).then(data => {
-          localStorage.setItem("sdfd", data);
+      if (localStorage.getItem("apply") === null) {
+        ApplyService.apply({password: this.password, finger:"apply"}).then(data => {
+          localStorage.setItem("apply", data.getAddr());
         }).catch((err) => {
-          alert(err);
+          alert("操作失败！", err);
         });
-      } else {
-        alert("你已完成报名，请不要重复操作！");
       }
+    }
+  },
+  created() {
+    if (localStorage.getItem("apply") !== null) {
+      alert("你已经完成报名，请不要重复操作！");
+      this.showControl = false;
     }
   }
 }

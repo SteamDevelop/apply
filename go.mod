@@ -38,8 +38,8 @@ require (
 )
 
 replace (
-    github.com/scryinfo/dot =>../dot
 	cloud.google.com/go => github.com/googleapis/google-cloud-go v0.39.0
+	github.com/scryinfo/dot v0.1.3-0.20190625102047-666d44ee7d72 => ../dot
 	github.com/scryinfo/dot/dots/grpc v0.0.0-20190625102047-666d44ee7d72 => ../dot/dots/grpc
 	go.uber.org/atomic => github.com/uber-go/atomic v1.4.0
 	go.uber.org/zap => github.com/uber-go/zap v1.10.0

@@ -10,7 +10,6 @@ import (
 	"github.com/scryinfo/apply/dots/auth2"
 	"github.com/scryinfo/apply/services/contract"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/gindot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"time"
 )
@@ -138,7 +137,7 @@ func RapiServerTypeLives() []*dot.TypeLives {
 		Lives: []dot.Live{
 			dot.Live{
 				LiveId:    RapiServerTypeId,
-				RelyLives: map[string]dot.LiveId{"ServerNobl": gserver.ServerNoblTypeId, "Bc": contract.BcTypeId, "GinRouter":gindot.RouterTypeId},
+				RelyLives: map[string]dot.LiveId{"ServerNobl": gserver.ServerNoblTypeId, "Bc": contract.BcTypeId},
 			},
 		},
 	}

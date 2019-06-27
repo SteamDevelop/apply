@@ -50,7 +50,7 @@ func Add(l dot.Line) error {
 					}
 				}
 				engine.GinEngine().StaticFile("/apply", filepath.Join(ex,"dist-apply/index.html"))
-				engine.GinEngine().Static("/static", filepath.Join(ex,"dist-apply/"))
+				engine.GinEngine().Static("/static", filepath.Join(ex,"dist-apply/static"))
 				engine.GinEngine().StaticFile("/sign", filepath.Join(ex,"dist-sign/index.html"))
 			}
 		},
